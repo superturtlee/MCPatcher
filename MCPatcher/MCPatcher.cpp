@@ -248,8 +248,6 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "ORIGINAL pattern size: " << patchData.original.size() << " bytes" << std::endl;
         std::cout << "PATCHED data size: " << patchData.patched.size() << " bytes" << std::endl;
-        std::vector<uint8_t> data;
-        
         if (!applyPatch(data, patchData)) {
 			std::cerr << "Failed to apply patch from file: " << patchFile << std::endl;
         }
