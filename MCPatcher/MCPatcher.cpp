@@ -218,43 +218,46 @@ bool applyPatch(std::vector<uint8_t>& data, const PatchData& patchData) {
 int main(int argc, char* argv[]) {
     std::cout << "=== Binary Patcher Tool ===" << std::endl;
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <input_file> <patch_file>" << std::endl;
+    if (argc < 3) {
+        std::cerr << "Usage: " << argv[0] << " <input_file> <patch_file> <patch_file2>  ..." << std::endl;
         std::cerr << "Example: " << argv[0] << " Minecraft.Windows.exe patch.txt" << std::endl;
         return 1;
     }
 
     std::string inputFile = argv[1];
-    std::string patchFile = argv[2];
-    std::string outputFile = "patched." + inputFile;
+	//backup original file to .bak
+	std::ifstream src(inputFile, std::ios::binary);
+	std::ofstream dst(inputFile + ".bak", std::ios::binary);
+	dst << src.rdbuf();
+	//close orignal and backup files
+	src.close();
+	dst.close();
 
-    // Read patch file
-    PatchData patchData;
-    if (!readPatchFile(patchFile, patchData)) {
-        return 1;
-    }
-
-    std::cout << "ORIGINAL pattern size: " << patchData.original.size() << " bytes" << std::endl;
-    std::cout << "PATCHED data size: " << patchData.patched.size() << " bytes" << std::endl;
-
-    // Read input file
     std::vector<uint8_t> data;
     if (!readBinaryFile(inputFile, data)) {
+		std::cerr << "Failed to read input file: " << inputFile << std::endl;
         return 1;
     }
 
-    std::cout << "Read input file: " << inputFile << " (" << data.size() << " bytes)" << std::endl;
-
-    // Apply patch
-    if (!applyPatch(data, patchData)) {
-        return 1;
-    }
-
-    // Write output file
+	
+    for (int i = 2; i < argc; i++) {
+		std::string patchFile = argv[i];
+        PatchData patchData;
+        if (!readPatchFile(patchFile, patchData)) {
+			std::cerr << "Failed to read patch file: " << patchFile << std::endl;
+        }
+        std::cout << "ORIGINAL pattern size: " << patchData.original.size() << " bytes" << std::endl;
+        std::cout << "PATCHED data size: " << patchData.patched.size() << " bytes" << std::endl;
+        std::vector<uint8_t> data;
+        
+        if (!applyPatch(data, patchData)) {
+			std::cerr << "Failed to apply patch from file: " << patchFile << std::endl;
+        }
+	}
+	std::string outputFile = inputFile; // Overwrite input file
     if (!writeBinaryFile(outputFile, data)) {
         return 1;
     }
-
     std::cout << "Patching successful! Output file: " << outputFile << std::endl;
 
     return 0;
