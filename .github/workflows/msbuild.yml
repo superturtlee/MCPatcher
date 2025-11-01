@@ -48,7 +48,7 @@ jobs:
       with:
         name: MCPatcher-build
         path: |
-          **/bin/Release/**/MCPatcher.exe
+          MCPatcher\x64\Release\MCPatcher.exe
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseAsyncResult.binpatch.txt
           patch.bat
