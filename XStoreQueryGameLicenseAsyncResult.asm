@@ -1,27 +1,27 @@
+
 option casemap:none
 .code
-
 XStoreQueryGameLicenseAsync proc
     push rdi
     mov rdi, rdx
-    mov rax, 0x4C56514334585035
+    mov rax, 04C56513458355039h    ; Hexadecimal literal with leading `0` and `h` suffix
     stosq
-    mov rax, 0x52583243
-    stosq ;set Store product ID
-    mov rax, 0x0CCCC000001010000 ;license details not trial is valid
+    mov rax, 052583243h            ; Hexadecimal literal for Store product ID
+    stosq
+    mov rax, 0CCCC000001010000h    ; License details: not trial, is valid
     stosq
     xor rax, rax 
     stosq
-    mov ecx, 7  
+    mov ecx, 7                     ; Repeat next `stosq` 7 times
     rep stosq
-    mov eax, 0xCCCCCCCC ;fill
+    mov eax, 0CCCCCCCCh            ; Fill data with commonly used pattern
     stosd
     xor eax, eax
     stosd
-    mov rax, 0x7FFFFFFFFFFFFFFF ;expire time QWORD
+    mov rax, 07FFFFFFFFFFFFFFFh    ; Expire time QWORD
     stosq
     pop rdi
-    xor eax, eax ;return 0
+    xor eax, eax                   ; Return 0
     ret
 XStoreQueryGameLicenseAsync endp
 end
