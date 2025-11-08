@@ -89,4 +89,4 @@ jobs:
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseAsyncResult.binpatch.txt
           patch.bat
-          patch_preview.exe
+          patch_preview.bat
