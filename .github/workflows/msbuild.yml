@@ -42,9 +42,26 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      
+    - name: Clone V2 injector
+      run: git clone https://github.com/superturtlee/MCpatcher2.git
+      
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ./MCpatcher2
+
+    - name: Build V2
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ./MCpatcher2
+    
     - name: Copy Files
-      run: copy x64/Release/MCPatcher.exe ./
-    - name: Upload build artifacts
+      run: |
+          copy x64/Release/MCPatcher.exe ./
+          copy MCpather2/x64/Release/MCpatcher2.dll ./
+          copy MCpather2/x64/Release/injector.dll ./
+    - name: Upload build artifacts Legacy
       uses: actions/upload-artifact@v4
       with:
         name: MCPatcher-build
@@ -53,3 +70,10 @@ jobs:
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseAsyncResult.binpatch.txt
           patch.bat
+    - name: Upload build artifacts V2
+      uses: actions/upload-artifact@v4
+      with:
+        name: MCPatcher-build
+        path: |
+          injector.exe
+          MCpatcher2.dll
