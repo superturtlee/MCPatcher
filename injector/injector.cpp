@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
     else {
         cout << "Dump Game Mode" << endl;
         target = "Minecraft.Windows.exe";
-        dllPath = "MCpatcher2.dll";
+        dllPath = "FileCopy.dll";
         dump = 1;
     }
     
