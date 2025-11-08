@@ -362,6 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-MCPatcher/MCpatcher2/pattern.h
+MCpatcher2/pattern.h
 XStoreQueryGameLicenseAsyncResult.binpatch.txt
 XStoreQueryGameLicenseAsync.binpatch.txt
