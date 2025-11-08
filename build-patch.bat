@@ -14,6 +14,7 @@ if not exist "%PS_SCRIPT%" (
 )
 
 REM Run PowerShell script with all parameters
+copy /Y patterns\* .
 powershell.exe -ExecutionPolicy Bypass -File "%PS_SCRIPT%" %*
-
+powershell.exe -ExecutionPolicy Bypass -File "%PS_SCRIPT%" -GeneratePattern
 exit /b %ERRORLEVEL%

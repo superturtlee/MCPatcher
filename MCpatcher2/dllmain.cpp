@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <string>
 #include <psapi.h> // Add this include at the top of your file (after windows.h) to define MODULEINFO
-
+#include "pattern.h"
 // Pattern matching structure
 struct Pattern {
     std::vector<uint8_t> original;
@@ -89,35 +89,7 @@ void InitializePatterns() {
     Pattern pattern1;
     pattern1.mask.clear();
 
-    std::string original1 =
-        "48 8B C4 57 48 83 EC 30 "
-        "48 C7 40 E8 FE FF FF FF "
-        "48 89 58 08 48 89 70 10 "
-        "48 8B FA 48 8B F1 4C 8D "
-        "40 18 48 8D 15 ?? ?? ?? "
-        "00 48 8D 0D ?? ?? ?? 00 "
-        "E8 ?? ?? FF FF 8B D8 85 "
-        "C0 78 2F 48 8B 4C 24 50 "
-        "48 8B 01 4C 8B C7 48 8B "
-        "D6 48 8B 80 E8 00 00 00 "
-        "FF 15 ?? ?? ?? 00 8B D8 "
-        "48 8B 4C 24 50 48 8B 01 "
-        "48 8B 40 10 FF 15 ?? ?? "
-        "?? 00 8B C3 48 8B 5C 24 "
-        "40 48 8B 74 24 48 48 83 "
-        "C4 30 5F C3";
 
-    std::string patched1 =
-        "57 48 8B FA 48 B8 39 50 "
-        "35 58 34 51 56 4C 48 AB "
-        "48 C7 C0 43 32 58 52 48 "
-        "AB 48 B8 00 00 01 01 00 "
-        "00 CC CC 48 AB 48 33 C0 "
-        "48 AB B9 07 00 00 00 F3 "
-        "48 AB B8 CC CC CC CC AB "
-        "33 C0 AB 48 B8 FF FF FF "
-        "FF FF FF FF 7F 48 AB 5F "
-        "33 C0 C3";
 
     pattern1.original = HexStringToBytes(original1, pattern1.mask);
     std::vector<int> dummyMask;
@@ -128,31 +100,7 @@ void InitializePatterns() {
     Pattern pattern2;
     pattern2.mask.clear();
 
-    std::string original2 =
-        "48 8B C4 57 48 83 EC 30 "
-        "48 C7 40 E8 FE FF FF FF "
-        "48 89 58 08 48 89 70 10 "
-        "48 8B FA 48 8B F1 4C 8D "
-        "40 18 48 8D 15 ?? ?? ?? "
-        "00 48 8D 0D ?? ?? ?? 00 "
-        "E8 ?? ?? FF FF 8B D8 85 "
-        "C0 78 2F 48 8B 4C 24 50 "
-        "48 8B 01 4C 8B C7 48 8B "
-        "D6 48 8B 80 E0 00 00 00 "
-        "FF 15 ?? ?? ?? 00 8B D8 "
-        "48 8B 4C 24 50 48 8B 01 "
-        "48 8B 40 10 FF 15 ?? ?? "
-        "?? 00 8B C3 48 8B 5C 24 "
-        "40 48 8B 74 24 48 48 83 "
-        "C4 30 5F C3";
 
-    std::string patched2 =
-        "57 48 83 EC 20 48 89 D7 "
-        "48 31 C0 48 C7 47 18 00 "
-        "00 00 00 48 89 F9 48 8B "
-        "47 10 48 85 C0 74 02 FF "
-        "D0 31 C0 48 83 C4 20 5F "
-        "C3";
 
     pattern2.original = HexStringToBytes(original2, pattern2.mask);
     pattern2.patched = HexStringToBytes(patched2, dummyMask);

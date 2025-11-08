@@ -8,7 +8,9 @@ param(
     [Parameter(Mandatory=$false)]
     [switch]$All = $false,
     [Parameter(Mandatory=$false)]
-    [switch]$Verify = $false
+    [switch]$Verify = $false,
+    [Parameter(Mandatory=$false)]
+    [switch]$GeneratePattern = $false
 )
 
 # Function to find ml64.exe
@@ -246,6 +248,124 @@ function Update-BinpatchFile {
     [System.IO.File]::WriteAllText($BinpatchFilePath, $content)
 }
 
+# Function to parse binpatch.txt file
+function Parse-BinpatchFile {
+    param([string]$BinpatchFilePath)
+    
+    $content = Get-Content $BinpatchFilePath -Raw
+    
+    $result = @{
+        Original = ""
+        Patched = ""
+    }
+    
+    # Extract ORIGINAL section
+    if ($content -match "(?s)ORIGINAL\s+([\s\S]+?)(?=PATCHED|$)") {
+        $originalSection = $matches[1].Trim()
+        # Format: keep only hex bytes, convert to single line with spaces
+        $result.Original = $originalSection -replace '\s+', ' ' -replace '^\s+|\s+$', ''
+    }
+    
+    # Extract PATCHED section
+    if ($content -match "(?s)PATCHED\s+([\s\S]+)$") {
+        $patchedSection = $matches[1].Trim()
+        # Format: keep only hex bytes, convert to single line with spaces
+        $result.Patched = $patchedSection -replace '\s+', ' ' -replace '^\s+|\s+$', ''
+    }
+    
+    return $result
+}
+
+# Function to format hex string for C++ with quotes and line breaks
+function Format-CppHexString {
+    param([string]$HexString)
+    
+    $bytes = $HexString -split '\s+' | Where-Object { $_ -ne '' }
+    $lines = @()
+    $bytesPerLine = 8
+    
+    for ($i = 0; $i -lt $bytes.Count; $i += $bytesPerLine) {
+        $lineBytes = $bytes[$i..[Math]::Min($i + $bytesPerLine - 1, $bytes.Count - 1)]
+        $lines += '"' + ($lineBytes -join ' ') + ' "'
+    }
+    
+    # Remove trailing space from last line
+    if ($lines.Count -gt 0) {
+        $lines[-1] = $lines[-1] -replace ' "$', '"'
+    }
+    
+    return $lines -join "`n"
+}
+
+# Function to generate pattern.h
+function Generate-PatternHeader {
+    param(
+        [string]$ScriptRoot,
+        [array]$BinpatchFiles
+    )
+    
+    Write-Host "`nGenerating pattern.h..." -ForegroundColor Cyan
+    
+    $headerContent = @"
+#pragma once
+#include <string>
+
+"@
+    
+    $patchIndex = 1
+    
+    foreach ($binpatchFile in $BinpatchFiles) {
+        Write-Host "  Reading: $($binpatchFile.Name)" -ForegroundColor Gray
+        
+        $parsed = Parse-BinpatchFile -BinpatchFilePath $binpatchFile.FullName
+        
+        if ([string]::IsNullOrWhiteSpace($parsed.Original)) {
+            Write-Host "    WARNING: No ORIGINAL section found, skipping" -ForegroundColor Yellow
+            continue
+        }
+        
+        if ([string]::IsNullOrWhiteSpace($parsed.Patched)) {
+            Write-Host "    WARNING: No PATCHED section found, skipping" -ForegroundColor Yellow
+            continue
+        }
+        
+        # Format for C++
+        $originalFormatted = Format-CppHexString -HexString $parsed.Original
+        $patchedFormatted = Format-CppHexString -HexString $parsed.Patched
+        
+        # Add to header content
+        $headerContent += "std::string original$patchIndex =`n"
+        $headerContent += $originalFormatted
+        $headerContent += ";`n"
+        
+        $headerContent += "std::string patched$patchIndex =`n"
+        $headerContent += $patchedFormatted
+        $headerContent += ";`n"
+        
+        if ($patchIndex -lt $BinpatchFiles.Count) {
+            $headerContent += "`n"
+        }
+        
+        Write-Host "    Added as original$patchIndex and patched$patchIndex" -ForegroundColor Green
+        $patchIndex++
+    }
+    
+    # Determine output path
+    $mcpatcher2Path = Join-Path $ScriptRoot "MCpatcher2"
+    if (-not (Test-Path $mcpatcher2Path)) {
+        Write-Host "  Creating directory: MCpatcher2" -ForegroundColor Gray
+        New-Item -ItemType Directory -Path $mcpatcher2Path -Force | Out-Null
+    }
+    
+    $outputPath = Join-Path $mcpatcher2Path "pattern.h"
+    
+    # Write the header file
+    [System.IO.File]::WriteAllText($outputPath, $headerContent, [System.Text.Encoding]::UTF8)
+    
+    Write-Host "`nGenerated: $outputPath" -ForegroundColor Green
+    Write-Host "Total patterns: $($patchIndex - 1)" -ForegroundColor Green
+}
+
 # Function to verify the PATCHED section matches the ASM file
 function Verify-Patch {
     param([string]$AsmFilePath)
@@ -291,6 +411,25 @@ try {
     
     Write-Host "Script root: $scriptRoot" -ForegroundColor Gray
     Write-Host ""
+    
+    # If only GeneratePattern is specified, skip assembly and go straight to pattern generation
+    if ($GeneratePattern -and -not $All -and [string]::IsNullOrWhiteSpace($AsmFile)) {
+        Write-Host "Generating pattern.h from existing binpatch files..." -ForegroundColor Cyan
+        Write-Host ""
+        
+        # Find all binpatch.txt files
+        $binpatchFiles = Get-ChildItem -Path $scriptRoot -Filter "*.binpatch.txt" -File | 
+                         Where-Object { -not $_.Name.StartsWith("_") } |
+                         Sort-Object Name
+        
+        if ($binpatchFiles.Count -eq 0) {
+            Write-Host "No binpatch.txt files found!" -ForegroundColor Yellow
+            exit 0
+        }
+        
+        Generate-PatternHeader -ScriptRoot $scriptRoot -BinpatchFiles $binpatchFiles
+        exit 0
+    }
     
     # Find ml64.exe
     Write-Host "Locating ml64.exe..." -ForegroundColor Cyan
@@ -362,12 +501,29 @@ try {
         Write-Host "Successfully processed: $successCount" -ForegroundColor Green
         if ($failCount -gt 0) {
             Write-Host "Failed: $failCount" -ForegroundColor Red
-            exit 1
+        }
+    }
+    
+    # Generate pattern.h if requested
+    if ($GeneratePattern -and $successCount -gt 0) {
+        # Find all binpatch.txt files
+        $binpatchFiles = Get-ChildItem -Path $scriptRoot -Filter "*.binpatch.txt" -File | 
+                         Where-Object { -not $_.Name.StartsWith("_") } |
+                         Sort-Object Name
+        
+        if ($binpatchFiles.Count -gt 0) {
+            Generate-PatternHeader -ScriptRoot $scriptRoot -BinpatchFiles $binpatchFiles
+        } else {
+            Write-Host "`nNo binpatch.txt files found for pattern generation!" -ForegroundColor Yellow
         }
     }
     
     Write-Host ""
     Write-Host "Done!" -ForegroundColor Green
+    
+    if ($failCount -gt 0) {
+        exit 1
+    }
     
 } catch {
     Write-Host ""
