@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 MCpatcher2/pattern.h
-XStoreQueryGameLicenseAsyncResult.binpatch.txt
-XStoreQueryGameLicenseAsync.binpatch.txt
+./XStoreQueryGameLicenseAsyncResult.binpatch.txt
+./XStoreQueryGameLicenseAsync.binpatch.txt
