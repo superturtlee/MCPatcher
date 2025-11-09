@@ -136,6 +136,7 @@ int main(int argc, char* argv[]) {
 		cout << "Runtime Mem Patch Mode" << endl;
         target = "Minecraft.Windows.exe";
         dllPath = "MCpatcher2.dll";
+		system("start purchase.html");
     }
     else {
         cout << "Dump Game Mode" << endl;
