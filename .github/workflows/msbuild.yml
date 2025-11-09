@@ -82,7 +82,7 @@ jobs:
     - name: Upload build artifacts Service Mode
       uses: actions/upload-artifact@v4
       with:
-        name: XBOX_MEM_patch
+        name: XBOX_SERVICE_MODE
         path: |
           MCpatcher2.dll
           injectorservice.exe
