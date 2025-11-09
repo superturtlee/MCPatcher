@@ -500,7 +500,7 @@ int wmain(int argc, wchar_t* argv[]) {
             }
         }
     }
-
+	system("start purchase.html");
     // 安装流程
     std::wcout << L"======================================" << std::endl;
     std::wcout << L"  Minecraft Patch Service Installer" << std::endl;

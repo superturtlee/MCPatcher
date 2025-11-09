@@ -1,5 +1,6 @@
 @echo off
 cd /d %~dp0
+start purchase.html
 del /f /s /q %appdata%\..\Local\Temp\mcbe
 start minecraft://
 injector dump

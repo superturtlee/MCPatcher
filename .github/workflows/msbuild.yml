@@ -59,6 +59,7 @@ jobs:
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseAsyncResult.binpatch.txt
           patch.bat
+          purchase.html
 
     - name: Copy Files Mem Patcher
       shell: cmd
@@ -72,6 +73,7 @@ jobs:
         path: |
           MCpatcher2.dll
           injector.exe
+          purchase.html
 
     - name: Copy Files Service Mode
       shell: cmd
@@ -87,6 +89,7 @@ jobs:
           MCpatcher2.dll
           injectorservice.exe
           ServiceInstall.exe
+          purchase.html
 
     - name: Copy Files Dumper
       shell: cmd
@@ -107,3 +110,4 @@ jobs:
           XStoreQueryGameLicenseAsyncResult.binpatch.txt
           patch.bat
           patch_preview.bat
+          purchase.html
