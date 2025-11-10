@@ -1,7 +1,7 @@
 
 option casemap:none
 .code
-XStoreQueryGameLicenseAsync proc
+XStoreQueryGameLicenseAsyncResult proc
     push rdi
     mov rdi, rdx
     mov rax, 04C56513458355039h    ; Hexadecimal literal with leading `0` and `h` suffix
@@ -23,5 +23,5 @@ XStoreQueryGameLicenseAsync proc
     pop rdi
     xor eax, eax                   ; Return 0
     ret
-XStoreQueryGameLicenseAsync endp
+XStoreQueryGameLicenseAsyncResult endp
 end
