@@ -57,7 +57,7 @@ jobs:
         path: |
           MCPatcher.exe
           XStoreQueryGameLicenseAsync.binpatch.txt
-          XStoreQueryGameLicenseAsyncResult.binpatch.txt
+          XStoreQueryGameLicenseResult.binpatch.txt
           patch.bat
           purchase.html
 
@@ -107,7 +107,7 @@ jobs:
           FileCopy.dll
           injector.exe
           XStoreQueryGameLicenseAsync.binpatch.txt
-          XStoreQueryGameLicenseAsyncResult.binpatch.txt
+          XStoreQueryGameLicenseResult.binpatch.txt
           patch.bat
           patch_preview.bat
           purchase.html
