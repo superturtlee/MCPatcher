@@ -95,11 +95,12 @@ void InitializePatterns() {
     // Pattern 2
     Pattern pattern2;
     pattern2.mask.clear();
-
-
-
     pattern2.original = HexStringToBytes(original2, pattern2.mask);
     pattern2.patched = HexStringToBytes(patched2, dummyMask);
+	Pattern pattern3;
+	pattern3.mask.clear();
+	pattern3.original = HexStringToBytes(original3, pattern3.mask);
+	pattern3.patched = HexStringToBytes(patched3, dummyMask);
     g_patterns.push_back(pattern2);
 }
 

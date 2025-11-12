@@ -58,6 +58,7 @@ jobs:
           MCPatcher.exe
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseResult.binpatch.txt
+          XStoreRegisterGameLicenseChanged.binpatch.txt
           patch.bat
           purchase.html
 
@@ -108,6 +109,7 @@ jobs:
           injector.exe
           XStoreQueryGameLicenseAsync.binpatch.txt
           XStoreQueryGameLicenseResult.binpatch.txt
+          XStoreRegisterGameLicenseChanged.binpatch.txt
           patch.bat
           patch_preview.bat
           purchase.html
