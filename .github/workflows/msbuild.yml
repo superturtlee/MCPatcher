@@ -91,7 +91,22 @@ jobs:
           injectorservice.exe
           ServiceInstall.exe
           purchase.html
-
+    - name: Copy Files Service Mode Next
+      shell: cmd
+      run: |
+          del MCpatcher2.dll
+          copy /Y prebuilts\MCpatcher2.dll .
+          copy /Y x64\Release\injectorservice.exe .
+          copy /Y x64\Release\ServiceInstall.exe .
+    - name: Upload build artifacts Service Mode
+      uses: actions/upload-artifact@v4
+      with:
+        name: XBOX_SERVICE_MODE_NEXT
+        path: |
+          MCpatcher2.dll
+          injectorservice.exe
+          ServiceInstall.exe
+          purchase.html
     - name: Copy Files Dumper
       shell: cmd
       run: |
