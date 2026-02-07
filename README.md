@@ -4,15 +4,18 @@
 
 只会分发mcpatcher_core.dll（这个dll会被注入到游戏）
 
-本项目目前作为MCUnlock++[https://www.bilibili.com/video/BV14CcweLExe]上游（推荐小白使用）
+本项目目前作为MCUnlock++[https://www.bilibili.com/video/BV14CcweLExe]
+上游（推荐小白使用）
 
 
 其他注入器推荐：
 
-winmm_hijack winmm.x64.dll[https://github.com/fly-studio/winmm_hijack/releases/download/v1.1/winmm.x64.dll],把下载的winmm.x64.dll命名为winmm.dll mcpatcher_core.dll命名为winmm.mcpatcher_core.dll
+winmm_hijack winmm.x64.dll[https://github.com/fly-studio/winmm_hijack/releases/download/v1.1/winmm.x64.dll]
+把下载的winmm.x64.dll命名为winmm.dll mcpatcher_core.dll命名为winmm.mcpatcher_core.dll
 
 
-Levilamina[https://github.com/LiteLDev/LeviLamina/] preload-native
+Levilamina[https://github.com/LiteLDev/LeviLamina/]
+preload-native
 
 1安装LeviLauncher[https://github.com/LiteLDev/LeviLauncher]
 
