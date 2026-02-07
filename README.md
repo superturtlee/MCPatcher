@@ -19,7 +19,7 @@ preload-native
 
 1安装LeviLauncher[https://github.com/LiteLDev/LeviLauncher]
 
-2安装支持Levilamina client的版本
+2安装mc版本
 
 3在mods下创建MCPatcher文件夹，创建manifest.json如下
 
